@@ -1,9 +1,18 @@
-package videohandler
+package media_converter
+
+import (
+  "fmt"
+  // "reflect"
+  "os"
+  "os/exec"
+  "github.com/satori/go.uuid"
+  "io/ioutil"
+)
 
 // Separate each image in an animated gif and resave in a unique folder
 // Create a read of each file in the directory
 // Return an array of blobs of each image and the directory
-func separateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
+func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
 
   // Generate a UUID and make a directory with corresponding name
   dir := fmt.Sprintf("./_%s", uuid.NewV4())
@@ -16,7 +25,7 @@ func separateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
     "convert", 
     "-coalesce", 
     animated.Name(), 
-    fmt.Sprintf("./%s/image_%%03d.gif", dir),
+    fmt.Sprintf("./%s/image_%%05d.gif", dir),
   )
   cmd.Run()
 
@@ -35,7 +44,35 @@ func separateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
   return
 }
 
-// TODO
-func videoToAnimatedGif(video *os.File) *os.File {
-  return video
+
+// Run ffmpeg to transform the video into an animated gif
+func VideoToAnimatedGif(video string, width, height int) *os.File {
+
+  // TODO: figure out a real tmp dir
+  dest := "./dest/test.gif"
+
+  cmd := exec.Command(
+    "ffmpeg",
+    "-i",
+    video,
+    "-pix_fmt",
+    "rgb24",
+    "-framerate",
+    "2",
+    "-vf",
+    fmt.Sprintf("scale=%d:%d", width, height),
+    dest,
+  )
+  if err := cmd.Run(); err != nil {
+    panic(err.Error())
+  }
+  defer cmd.Close()
+
+  reader, err := os.Open(dest)
+  if err != nil {
+    panic(err.Error())
+  }
+  defer reader.Close()
+
+  return reader
 }

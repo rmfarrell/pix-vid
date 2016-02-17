@@ -69,9 +69,9 @@ func NewSvgr(imageFiles [][]byte, maxSize int, name string) pixelArray {
   return pixelArray {
     svgContent:  writeContainer(w,h),
     pixelData:   pixelData,
-    w:            int(w),
-    h:            int(h),
-    name:         name,
+    w:           int(w),
+    h:           int(h),
+    name:        name,
   }
 }
 

@@ -1,2 +1,3 @@
-dest
-src
+.DS_Store
+dest/*
+src/*
