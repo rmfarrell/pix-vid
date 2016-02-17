@@ -15,7 +15,7 @@ import (
 func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
 
   // Generate a UUID and make a directory with corresponding name
-  dir := fmt.Sprintf("./_%s", uuid.NewV4())
+  dir := fmt.Sprintf("./%s", uuid.NewV4())
   if err := os.Mkdir(dir, 0777); err != nil {
     panic(err.Error())
   }
@@ -25,7 +25,7 @@ func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
     "convert", 
     "-coalesce", 
     animated.Name(), 
-    fmt.Sprintf("./%s/image_%%05d.gif", dir),
+    fmt.Sprintf("./%s/%%05d.gif", dir),
   )
   cmd.Run()
 
@@ -36,14 +36,24 @@ func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
     imageFiles = append(imageFiles, rf)
   }
 
+  /*
   // Clean up the temprorary directory once each image is stored in imageFiles blob
   if err := os.RemoveAll(dir); err != nil {
     panic(err.Error())
   }
+  */
 
   return
 }
 
+func Cleanup() {
+
+  // Remove the temporary video
+  err := os.Remove("./dest/test.gif")
+  if (err != nil) {
+    panic(err.Error())
+  }
+}
 
 // Run ffmpeg to transform the video into an animated gif
 func VideoToAnimatedGif(video string, width, height int) *os.File {
@@ -66,8 +76,8 @@ func VideoToAnimatedGif(video string, width, height int) *os.File {
   if err := cmd.Run(); err != nil {
     panic(err.Error())
   }
-  defer cmd.Close()
 
+  // Read th
   reader, err := os.Open(dest)
   if err != nil {
     panic(err.Error())
