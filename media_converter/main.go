@@ -9,6 +9,11 @@ import (
   "io/ioutil"
 )
 
+
+func CreatePix() {
+  
+}
+
 // Separate each image in an animated gif and resave in a unique folder
 // Create a read of each file in the directory
 // Return an array of blobs of each image and the directory

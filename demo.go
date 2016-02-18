@@ -1,11 +1,11 @@
 package main
 
 import (
-  // "fmt"
+  "fmt"
   // "reflect"
   // "os"
   media_converter "./media_converter"
-  // pixelizr "./pixelizer"
+  pixelizr "./pixelizer"
 )
 
 const (
@@ -28,9 +28,17 @@ func main() {
 
   // Store each file in memory so we get access to each frame of the animated gif
 
-  gif := media_converter.VideoToAnimatedGif(file, 120, 60)
+  pxs := make(chan []byte)
 
-  media_converter.SeparateAnimatedGif(gif)
+  gif := media_converter.VideoToAnimatedGif(file, 360, 180)
+
+  imgs := media_converter.SeparateAnimatedGif(gif)
+
+  fmt.Println(len(imgs))
+
+  for i := 0; i < len(imgs); i ++ {
+    go pixelizr.ReadImage(imgs[0], pxs)
+  }
 
   media_converter.Cleanup()
 

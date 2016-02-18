@@ -31,6 +31,26 @@ type pixelArray struct {
   name        string
 }
 
+func ReadImage(img []byte, pixels chan<- []byte) {
+
+  maxSize := 60
+
+  wand := imagick.NewMagickWand()
+
+  if err := wand.ReadImageBlob(img); err != nil {
+    panic(err.Error())
+  }
+
+  w,h := shrinkImage(wand, maxSize)
+
+  px, err := wand.ExportImagePixels(0,0,w,h,"RGB", imagick.PIXEL_CHAR)
+  if err != nil {
+    panic(err.Error())
+  }
+
+  pixels <- px.([]uint8)
+}
+
 /* 
 * Shrinks the image to its maxSize, and samples each pixels in the image array
 * @param imageFiles {[][]byte} expects an array of image blobs
