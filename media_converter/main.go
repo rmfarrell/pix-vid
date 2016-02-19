@@ -61,33 +61,32 @@ func Cleanup() {
 }
 
 // Run ffmpeg to transform the video into an animated gif
-func VideoToAnimatedGif(video string, width, height int) *os.File {
+func VideoToAnimatedGif(video string, width, height int) {
 
   // TODO: figure out a real tmp dir
-  dest := "./dest/test.gif"
+  // dest := "./dest/test.gif"
 
+
+  // ffmpeg -i "input.mov" -an -f image2 "output_%05d.jpg"
   cmd := exec.Command(
     "ffmpeg",
     "-i",
     video,
-    "-pix_fmt",
-    "rgb24",
-    "-framerate",
-    "2",
-    "-vf",
-    fmt.Sprintf("scale=%d:%d", width, height),
-    dest,
+    "-an",
+    "-f",
+    "image2",
+    fmt.Sprintf("dest/output%%04d"),
   )
   if err := cmd.Run(); err != nil {
     panic(err.Error())
   }
 
   // Read th
-  reader, err := os.Open(dest)
+  /*reader, err := os.Open(dest)
   if err != nil {
     panic(err.Error())
   }
   defer reader.Close()
 
-  return reader
+  return reader*/
 }

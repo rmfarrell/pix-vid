@@ -25,21 +25,23 @@ func worker(jobs <-chan []byte, results chan<- []uint8) {
 
 func main() {
 
-  pxs := make(chan []uint8, 200)
-  jobs := make(chan []byte, 500)
+  // pxs := make(chan []uint8, 200)
+  // jobs := make(chan []byte, 500)
   
-  gif := media_converter.VideoToAnimatedGif(file, 360, 180)
+  media_converter.VideoToAnimatedGif(file, 360, 180)
 
-  imgs := media_converter.SeparateAnimatedGif(gif)
+  // media_converter.SeparateAnimatedGif(gif)
 
-  media_converter.Cleanup()
+  // media_converter.Cleanup()
 
-  for i := 0; i < 25; i ++ {
-    go worker(jobs, pxs)
-  }
+  // pixelizr.ReadImage(imgs[0])
 
-  for j := 0; j < len(imgs); j++ {
-    jobs <- imgs[j]
-  }
-  close(jobs)
+  // for i := 0; i < 25; i ++ {
+  //   go worker(jobs, pxs)
+  // }
+
+  // for j := 0; j < len(imgs); j++ {
+  //   jobs <- imgs[j]
+  // }
+  // close(jobs)
 }
