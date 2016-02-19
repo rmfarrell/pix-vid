@@ -31,7 +31,7 @@ type pixelArray struct {
   name        string
 }
 
-func ReadImage(img []byte, pixels chan<- []byte) {
+func ReadImage(img []byte) []uint8 {
 
   maxSize := 60
 
@@ -48,7 +48,7 @@ func ReadImage(img []byte, pixels chan<- []byte) {
     panic(err.Error())
   }
 
-  pixels <- px.([]uint8)
+  return px.([]uint8)
 }
 
 /* 

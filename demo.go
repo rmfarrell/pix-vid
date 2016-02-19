@@ -15,36 +15,31 @@ const (
 
 var file string = "./src/daneka.mp4"
 
+
+func worker(jobs <-chan []byte, results chan<- []uint8) {
+  for j := range jobs {
+    fmt.Println("run")
+    results <- pixelizr.ReadImage(j)
+  }
+}
+
 func main() {
 
-  // Open the file
-  /*
-  reader, err := os.Open(file)
-  if err != nil {
-    panic(err.Error())
-  }
-  defer reader.Close()
-  */
-
-  // Store each file in memory so we get access to each frame of the animated gif
-
-  pxs := make(chan []byte)
-
+  pxs := make(chan []uint8, 200)
+  jobs := make(chan []byte, 500)
+  
   gif := media_converter.VideoToAnimatedGif(file, 360, 180)
 
   imgs := media_converter.SeparateAnimatedGif(gif)
 
-  fmt.Println(len(imgs))
-
-  for i := 0; i < len(imgs); i ++ {
-    go pixelizr.ReadImage(imgs[0], pxs)
-  }
-
   media_converter.Cleanup()
 
-  /*
-  lwf := pixelizr.NewSvgr(imgs, 20, "lemmy_guitar")
+  for i := 0; i < 25; i ++ {
+    go worker(jobs, pxs)
+  }
 
-  lwf.FunkyTriangles()
-  */
+  for j := 0; j < len(imgs); j++ {
+    jobs <- imgs[j]
+  }
+  close(jobs)
 }
