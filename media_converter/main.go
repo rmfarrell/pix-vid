@@ -3,15 +3,31 @@ package media_converter
 import (
   "fmt"
   // "reflect"
+  // "strconv"
   "os"
   "os/exec"
+  "path/filepath"
   "github.com/satori/go.uuid"
   "io/ioutil"
 )
 
+const (
+  srcDir string = "/tmp/dest/" // TODO: change to "/tmp/""
+)
 
-func CreatePix() {
-  
+type imageSequence struct {
+  id    uuid.UUID
+  files []string
+}
+
+func NewImageSequence(videoPath string) imageSequence {
+
+  _id := uuid.NewV4()
+
+  return imageSequence {
+    id: _id,
+    files: videoToImages(videoPath, _id),
+  }
 }
 
 // Separate each image in an animated gif and resave in a unique folder
@@ -60,33 +76,60 @@ func Cleanup() {
   }
 }
 
-// Run ffmpeg to transform the video into an animated gif
-func VideoToAnimatedGif(video string, width, height int) {
-
-  // TODO: figure out a real tmp dir
-  // dest := "./dest/test.gif"
-
-
-  // ffmpeg -i "input.mov" -an -f image2 "output_%05d.jpg"
+func ImagesToVideo() {
+  // ffmpeg -framerate 1 -pattern_type glob -i '*.jpg' -c:v libx264 out.mp4
   cmd := exec.Command(
     "ffmpeg",
     "-i",
+    fmt.Sprintf("dest/output%%04d.jpg"),
+    "-c:v",
+    "libx264",
+    "-vf",
+    "fps=25",
+    "-pix_fmt",
+    "yuv420p",
+    "out.mp4",
+    // "ffmpeg",
+    // "-f",
+    // "image2",
+    // "-s",
+    // "1920x1080",
+    // "-i",
+    // fmt.Sprintf("dest/output%%04d.jpg"),
+    // "-vcodec",
+    // "libx264",
+    // "-crf",
+    // "15",
+    // "test.mp4",
+  )
+  if err := cmd.Run(); err != nil {
+    panic(err.Error())
+  }
+}
+
+// Run ffmpeg to transform the video into individual jpgs
+// Follows pattern /tmp/[uuid]-00001.jpg
+func videoToImages(video string, id uuid.UUID) []string {
+
+  cmd := exec.Command(
+    "ffmpeg",
+    "-r",
+    "25",
+    "-i",
     video,
-    "-an",
     "-f",
     "image2",
-    fmt.Sprintf("dest/output%%04d"),
+    fmt.Sprintf("%s%s-%%06d.jpg", srcDir, id),
   )
   if err := cmd.Run(); err != nil {
     panic(err.Error())
   }
 
-  // Read th
-  /*reader, err := os.Open(dest)
-  if err != nil {
+  // files, err := filepath.Glob(srcDir + strconv(id))
+  files, err := filepath.Glob(fmt.Sprintf("%s%s-*.jpg", srcDir, id))
+  if (err != nil) {
     panic(err.Error())
   }
-  defer reader.Close()
 
-  return reader*/
+  return files
 }

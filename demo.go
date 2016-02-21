@@ -13,7 +13,7 @@ const (
   src   string  = "./src/"
 )
 
-var file string = "./src/daneka.mp4"
+var file string = "./src/betrayed.mp4"
 
 
 func worker(jobs <-chan []byte, results chan<- []uint8) {
@@ -28,7 +28,13 @@ func main() {
   // pxs := make(chan []uint8, 200)
   // jobs := make(chan []byte, 500)
   
-  media_converter.VideoToAnimatedGif(file, 360, 180)
+  // media_converter.VideoToImages(file, 360, 180)
+
+  imgs := media_converter.NewImageSequence(file)
+
+  fmt.Println(imgs)
+
+  // media_converter.ImagesToVideo()
 
   // media_converter.SeparateAnimatedGif(gif)
 
