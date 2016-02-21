@@ -67,13 +67,16 @@ func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
   return
 }
 
-func Cleanup() {
+func (sequence imageSequence) Clean() {
 
-  // Remove the temporary video
-  err := os.Remove("./dest/test.gif")
-  if (err != nil) {
-    panic(err.Error())
+  for _, file := range sequence.files {
+    err := os.Remove(file)
+    if (err != nil) {
+      panic(err.Error())
+    }
   }
+
+  return
 }
 
 func ImagesToVideo() {

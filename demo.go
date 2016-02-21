@@ -32,7 +32,7 @@ func main() {
 
   imgs := media_converter.NewImageSequence(file)
 
-  fmt.Println(imgs)
+  imgs.Clean()
 
   // media_converter.ImagesToVideo()
 
