@@ -1,11 +1,11 @@
 package main
 
 import (
-  // "fmt"
+  "fmt"
   // "reflect"
   // "os"
   media_converter "./media_converter"
-  // pixelizr "./pixelizer"
+  pixelizr "./pixelizer"
 )
 
 const (
@@ -16,22 +16,16 @@ const (
 var vid string = "./src/betrayed.mp4"
 
 
-func worker(jobs <-chan string, results chan<- string) {
+func worker(files <-chan string, results chan<- []uint8) {
 
-  for job := range jobs {
-    results <- job
+  for file := range files {
+    results <- pixelizr.ReadImage(file)
   }
-
-
-  /*for j := range jobs {
-    fmt.Println("run")
-    results <- pixelizr.ReadImage(j)
-  }*/
 }
 
 func main() {
 
-  pxs := make(chan string, 200)
+  pxs := make(chan []uint8, 200)
   jobs := make(chan string, 500)
 
   imgSequence := media_converter.NewImageSequence(vid)
@@ -46,8 +40,6 @@ func main() {
     jobs <- imgFiles[j]
   }
   close(jobs)
-
-  // imgs.ToMp4("dest/out.mp4")
 
   imgSequence.Clean()
 }

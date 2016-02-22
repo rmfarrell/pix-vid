@@ -6,6 +6,7 @@ import (
   _ "image"
   "os"
   "github.com/gographics/imagick/imagick"
+  "io/ioutil"
 )
 
 const (
@@ -31,13 +32,18 @@ type pixelArray struct {
   name        string
 }
 
-func ReadImage(img []byte) []uint8 {
+func ReadImage(img string) []uint8 {
+
+  reader, err := ioutil.ReadFile(img)
+  if err != nil {
+    panic(err.Error())
+  }
 
   maxSize := 60
 
   wand := imagick.NewMagickWand()
 
-  if err := wand.ReadImageBlob(img); err != nil {
+  if err := wand.ReadImageBlob(reader); err != nil {
     panic(err.Error())
   }
 
