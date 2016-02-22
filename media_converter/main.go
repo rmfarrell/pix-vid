@@ -30,6 +30,10 @@ func NewImageSequence(videoPath string) imageSequence {
   }
 }
 
+func (sq imageSequence) GetFiles() []string {
+  return sq.files
+}
+
 func (sq imageSequence) Clean() {
 
   for _, file := range sq.files {
