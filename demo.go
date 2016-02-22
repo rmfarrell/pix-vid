@@ -13,38 +13,43 @@ const (
   src   string  = "./src/"
 )
 
-var file string = "./src/daneka.mp4"
+var file string = "./src/betrayed.mp4"
+
+
+func worker(jobs <-chan []byte, results chan<- []uint8) {
+  for j := range jobs {
+    fmt.Println("run")
+    results <- pixelizr.ReadImage(j)
+  }
+}
 
 func main() {
 
-  // Open the file
-  /*
-  reader, err := os.Open(file)
-  if err != nil {
-    panic(err.Error())
-  }
-  defer reader.Close()
-  */
+  // pxs := make(chan []uint8, 200)
+  // jobs := make(chan []byte, 500)
+  
+  // media_converter.VideoToImages(file, 360, 180)
 
-  // Store each file in memory so we get access to each frame of the animated gif
+  imgs := media_converter.NewImageSequence(file)
 
-  pxs := make(chan []byte)
+  imgs.ToMp4("dest/out.mp4")
 
-  gif := media_converter.VideoToAnimatedGif(file, 360, 180)
+  imgs.Clean()
 
-  imgs := media_converter.SeparateAnimatedGif(gif)
+  // media_converter.ImagesToVideo()
 
-  fmt.Println(len(imgs))
+  // media_converter.SeparateAnimatedGif(gif)
 
-  for i := 0; i < len(imgs); i ++ {
-    go pixelizr.ReadImage(imgs[0], pxs)
-  }
+  // media_converter.Cleanup()
 
-  media_converter.Cleanup()
+  // pixelizr.ReadImage(imgs[0])
 
-  /*
-  lwf := pixelizr.NewSvgr(imgs, 20, "lemmy_guitar")
+  // for i := 0; i < 25; i ++ {
+  //   go worker(jobs, pxs)
+  // }
 
-  lwf.FunkyTriangles()
-  */
+  // for j := 0; j < len(imgs); j++ {
+  //   jobs <- imgs[j]
+  // }
+  // close(jobs)
 }
