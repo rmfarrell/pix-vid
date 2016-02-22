@@ -8,7 +8,7 @@ import (
   "os/exec"
   "path/filepath"
   "github.com/satori/go.uuid"
-  "io/ioutil"
+  // "io/ioutil"
 )
 
 const (
@@ -30,46 +30,9 @@ func NewImageSequence(videoPath string) imageSequence {
   }
 }
 
-// Separate each image in an animated gif and resave in a unique folder
-// Create a read of each file in the directory
-// Return an array of blobs of each image and the directory
-func SeparateAnimatedGif(animated *os.File) (imageFiles [][]byte) {
+func (sq imageSequence) Clean() {
 
-  // Generate a UUID and make a directory with corresponding name
-  dir := fmt.Sprintf("./%s", uuid.NewV4())
-  if err := os.Mkdir(dir, 0777); err != nil {
-    panic(err.Error())
-  }
-
-  // Separate and coalesce each frame of the animation into the new folder
-  cmd := exec.Command(
-    "convert", 
-    "-coalesce", 
-    animated.Name(), 
-    fmt.Sprintf("./%s/%%05d.gif", dir),
-  )
-  cmd.Run()
-
-  // Save a reference to each file in the directory
-  files, _ := ioutil.ReadDir(dir)
-  for _, f := range files {
-    rf, _ := ioutil.ReadFile(dir + "/" + f.Name())
-    imageFiles = append(imageFiles, rf)
-  }
-
-  /*
-  // Clean up the temprorary directory once each image is stored in imageFiles blob
-  if err := os.RemoveAll(dir); err != nil {
-    panic(err.Error())
-  }
-  */
-
-  return
-}
-
-func (sequence imageSequence) Clean() {
-
-  for _, file := range sequence.files {
+  for _, file := range sq.files {
     err := os.Remove(file)
     if (err != nil) {
       panic(err.Error())
@@ -79,35 +42,23 @@ func (sequence imageSequence) Clean() {
   return
 }
 
-func ImagesToVideo() {
+func (sq imageSequence) ToMp4(dest string) error {
   // ffmpeg -framerate 1 -pattern_type glob -i '*.jpg' -c:v libx264 out.mp4
   cmd := exec.Command(
     "ffmpeg",
     "-i",
-    fmt.Sprintf("dest/output%%04d.jpg"),
+    fmt.Sprintf("%s%s-%%06d.jpg", srcDir, sq.id),
     "-c:v",
     "libx264",
     "-vf",
     "fps=25",
     "-pix_fmt",
     "yuv420p",
-    "out.mp4",
-    // "ffmpeg",
-    // "-f",
-    // "image2",
-    // "-s",
-    // "1920x1080",
-    // "-i",
-    // fmt.Sprintf("dest/output%%04d.jpg"),
-    // "-vcodec",
-    // "libx264",
-    // "-crf",
-    // "15",
-    // "test.mp4",
+    dest,
   )
-  if err := cmd.Run(); err != nil {
-    panic(err.Error())
-  }
+  err := cmd.Run()
+
+  return err
 }
 
 // Run ffmpeg to transform the video into individual jpgs

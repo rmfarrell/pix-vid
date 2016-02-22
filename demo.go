@@ -32,6 +32,8 @@ func main() {
 
   imgs := media_converter.NewImageSequence(file)
 
+  imgs.ToMp4("dest/out.mp4")
+
   imgs.Clean()
 
   // media_converter.ImagesToVideo()
