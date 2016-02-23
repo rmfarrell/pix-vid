@@ -2,6 +2,7 @@ package main
 
 import (
   "fmt"
+  "math"
   // "reflect"
   // "os"
   media_converter "./media_converter"
@@ -9,37 +10,48 @@ import (
 )
 
 const (
-  dest  string  = "./dest/"
-  src   string  = "./src/"
+  dest      string  = "./dest/"
+  src       string  = "./src/"
+  maxFrames float64 = 100
 )
 
 var vid string = "./src/betrayed.mp4"
 
 
-func worker(files <-chan string, results chan<- []uint8) {
+func worker(imgFiles []string, jobs <-chan int, results chan<- string) {
 
-  for file := range files {
-    results <- pixelizr.ReadImage(file)
+  for job := range jobs {
+    _dest := fmt.Sprintf("%sp-%d.png",dest,job)
+    px := pixelizr.NewPixelizr(imgFiles[job], 60)
+    px.BlocksPng(_dest)
+    fmt.Println(fmt.Sprintf("succcess! %d", job))
+    results <- _dest
   }
 }
 
 func main() {
 
-  pxs := make(chan []uint8, 200)
-  jobs := make(chan string, 500)
+  jobs := make(chan int, 500)
+  pngs := make(chan string, 500)
 
   imgSequence := media_converter.NewImageSequence(vid)
 
   imgFiles := imgSequence.GetFiles()
 
-  for i := 0; i < 25; i ++ {
-    go worker(jobs, pxs)
+  frames := int(math.Min(maxFrames, float64(len(imgFiles))))
+
+  for i := 0; i < 20; i ++ {
+    go worker(imgFiles, jobs, pngs)
   }
 
-  for j := 0; j < len(imgFiles); j++ {
-    jobs <- imgFiles[j]
+  for j := 0; j < frames; j++ {
+    jobs <- j
   }
   close(jobs)
+
+  for a := 0; a < frames; a++ {
+    <-pngs
+  }
 
   imgSequence.Clean()
 }
