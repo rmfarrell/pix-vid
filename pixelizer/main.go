@@ -1,7 +1,6 @@
 package svgr
 
 import (
-  _ "image"
   "github.com/gographics/imagick/imagick"
   "io/ioutil"
 )
@@ -12,22 +11,6 @@ const (
   //Amount of randomness to apply to "Funky" pixelation methods
   Funkiness           int       = 6 
 )
-
-// The actual body of the svg output
-type svgContent struct {
-  start, g, end string
-}
-
-type pixelArray struct {
-  svgContent
-  // An array of array of exported pixels.
-  // Each parent array is a frame in an animation (a single frame is) pixelData[0]
-  // The child arrays represent the rgb value of every pixel of the image
-  pixelData   [][]uint8
-  // Height and width of the image(s)
-  w,h         int
-  name        string
-}
 
 type wands struct {
   pw *imagick.PixelWand       
