@@ -12,19 +12,19 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 100
+  maxFrames float64 = 3
 )
 
-var vid string = "./src/betrayed.mp4"
+var vid string = "./src/richter-cut.mp4"
 
 
 func worker(imgFiles []string, jobs <-chan int, results chan<- string) {
 
   for job := range jobs {
-    _dest := fmt.Sprintf("%sp-%d.png",dest,job)
-    px := pixelizr.NewPixelizr(imgFiles[job], 60)
+    _dest := fmt.Sprintf("%s.png",imgFiles[job])
+    px := pixelizr.NewPixelizr(imgFiles[job], 90)
     px.BlocksPng(_dest)
-    fmt.Println(fmt.Sprintf("succcess! %d", job))
+    fmt.Println(fmt.Sprintf("succcess! %s", _dest))
     results <- _dest
   }
 }
@@ -49,9 +49,9 @@ func main() {
   }
   close(jobs)
 
-  for a := 0; a < frames; a++ {
-    <-pngs
+  for x := 0; x < frames; x++ {
+    imgSequence = imgSequence.Add(<-pngs)
   }
 
-  imgSequence.Clean()
+  go imgSequence.Clean()
 }

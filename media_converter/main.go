@@ -46,6 +46,11 @@ func (sq imageSequence) Clean() {
   return
 }
 
+func (sq imageSequence) Add(file string) imageSequence {
+  sq.files = append(sq.files, file)
+  return sq
+}
+
 func (sq imageSequence) ToMp4(dest string) error {
   // ffmpeg -framerate 1 -pattern_type glob -i '*.jpg' -c:v libx264 out.mp4
   cmd := exec.Command(
