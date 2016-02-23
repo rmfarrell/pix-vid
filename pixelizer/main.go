@@ -32,13 +32,20 @@ type pixelArray struct {
   name        string
 }
 
-func ReadImage(img string) []uint8 {
+type pixelData struct{
+  data    []uint8
+  rows    int
+  columns int
+}
+
+func ReadImage(img string) pixelData {
 
   reader, err := ioutil.ReadFile(img)
   if err != nil {
     panic(err.Error())
   }
 
+  //TODO: maxSize can be larger than original image
   maxSize := 60
 
   wand := imagick.NewMagickWand()
@@ -54,7 +61,11 @@ func ReadImage(img string) []uint8 {
     panic(err.Error())
   }
 
-  return px.([]uint8)
+  return pixelData {
+    data:    px.([]uint8),
+    rows:    int(h),
+    columns: int(w),
+  }
 }
 
 /* 
