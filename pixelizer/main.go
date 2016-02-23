@@ -68,6 +68,39 @@ func intitializeWands() wands {
 * Private Methods
 */
 
+/**
+ * Iterate through a exported pixel data, apply a render method to each pixel and save the result
+ * @param {func} renderMethod - the method used to render individual pixels
+ * @param {string} dest - the intended destination for the saved png.
+ * @return error
+*/
+func (pxd pixelData) writePng(renderMethod func(int, int, int), dest string) error {
+
+  bg := imagick.NewPixelWand()
+
+  idx := 0
+  
+  for row := 0; row < pxd.rows; row++ {
+
+    for col := 0; col < pxd.columns; col++ {
+
+      renderMethod(row, col, idx)
+
+      idx += 3
+    }
+  }
+
+  // Save image to dest
+  mw := imagick.NewMagickWand()
+  mw.NewImage(1920,1080,bg)
+  mw.SetImageFormat("png")
+  mw.DrawImage(pxd.wands.dw)
+  mw.SetAntialias(false)
+  err := mw.WriteImage(dest)
+
+  return err
+}
+
 // Shrink an image so that its longest dimension is no longer than maxSize
 func shrinkImage(wand *imagick.MagickWand, maxSize int) (w,h uint) {
 

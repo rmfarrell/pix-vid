@@ -2,13 +2,12 @@ package svgr
 
 import (
   "fmt"
-  "github.com/gographics/imagick/imagick"
 )
 
-func (pxd pixelData) BlocksPng(dest string) {
+func (pxd pixelData) BlocksPng(dest string) error {
 
 
-  pxd.writePng(func(row, col, idx int) {
+  err := pxd.writePng(func(row, col, idx int) {
 
       mult := pxd.blockSize
 
@@ -27,29 +26,6 @@ func (pxd pixelData) BlocksPng(dest string) {
       pxd.wands.dw.Circle(ox,oy,px,py)
 
     }, dest)
-}
 
-
-func (pxd pixelData) writePng(renderMethod func(int, int, int), dest string) {
-
-  bg := imagick.NewPixelWand()
-
-  idx := 0
-  
-  for row := 0; row < pxd.rows; row++ {
-
-    for col := 0; col < pxd.columns; col++ {
-
-      renderMethod(row, col, idx)
-
-      idx += 3
-    }
-  }
-
-  mw := imagick.NewMagickWand()
-  mw.NewImage(1920,1080,bg)
-  mw.SetImageFormat("png")
-  mw.DrawImage(pxd.wands.dw)
-  mw.SetAntialias(false)
-  mw.WriteImage(dest)
+  return err
 }
