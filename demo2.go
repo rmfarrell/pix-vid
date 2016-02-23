@@ -12,6 +12,6 @@ const (
 
 func main() {
 
-  px := pixelizr.ReadImage("src/harvey.jpg")
+  px := pixelizr.NewPixelizr("src/harvey.jpg", 90)
   px.BlocksPng("dest/harvey.png")
 }
