@@ -3,6 +3,7 @@ package svgr
 import (
   "github.com/gographics/imagick/imagick"
   "io/ioutil"
+  "sync"
   // "fmt"
 )
 
@@ -23,7 +24,8 @@ type pixelData struct{
   data      []uint8
   rows      int
   columns   int
-  blockSize int 
+  blockSize int
+  wg        sync.WaitGroup
   wands
 }
 
@@ -38,6 +40,8 @@ func NewPixelizr(img string, targetRes int) (pixelData, error) {
   if err != nil {
     panic(err.Error())
   }
+
+  var wg sync.WaitGroup
 
   wand := imagick.NewMagickWand()
 
@@ -57,6 +61,7 @@ func NewPixelizr(img string, targetRes int) (pixelData, error) {
     rows:      int(height),
     columns:   int(width),
     blockSize: int(1080/height),
+    wg:        wg,
     wands:     intitializeWands(),
   }, err
 }
@@ -109,6 +114,9 @@ func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress)) {
       idx += 3
     }
   }
+
+  pxd.wg.Wait()
+
   return
 }
 
