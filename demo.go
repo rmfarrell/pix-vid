@@ -12,46 +12,48 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 3
+  maxFrames float64 = 10
 )
 
 var vid string = "./src/richter-cut.mp4"
 
 
-func worker(imgFiles []string, jobs <-chan int, results chan<- string) {
+func worker(jobs <-chan string, results chan<- string) {
 
   for job := range jobs {
-    _dest := fmt.Sprintf("%s.png",imgFiles[job])
-    px := pixelizr.NewPixelizr(imgFiles[job], 90)
-    px.BlocksPng(_dest)
-    fmt.Println(fmt.Sprintf("succcess! %s", _dest))
+    _dest := fmt.Sprintf("%s.png",job)
+
+    px, err := pixelizr.NewPixelizr(job, 60)
+    if(err != nil) {
+      panic(err.Error())
+    }
+
+    err = px.BlocksPng(_dest)
+    if (err != nil) {
+      panic(err.Error())
+    }
+
+    fmt.Println(fmt.Sprintf("succcess! %s", job))
     results <- _dest
   }
 }
 
 func main() {
 
-  jobs := make(chan int, 500)
+  // jobs := make(chan string, 500)
   pngs := make(chan string, 500)
 
   imgSequence := media_converter.NewImageSequence(vid)
 
-  imgFiles := imgSequence.GetFiles()
+  frames := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
 
-  frames := int(math.Min(maxFrames, float64(len(imgFiles))))
-
-  for i := 0; i < 20; i ++ {
-    go worker(imgFiles, jobs, pngs)
+  for i := 0; i < 6; i ++ {
+    go worker(imgSequence.Files, pngs)
   }
 
-  for j := 0; j < frames; j++ {
-    jobs <- j
-  }
-  close(jobs)
-
-  for x := 0; x < frames; x++ {
-    imgSequence = imgSequence.Add(<-pngs)
+  for a := 0; a < frames; a++ {
+    <-pngs
   }
 
-  go imgSequence.Clean()
+  imgSequence.Clean()
 }

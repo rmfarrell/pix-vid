@@ -26,7 +26,7 @@ type pixelData struct{
   wands
 }
 
-func NewPixelizr(img string, targetRes int) pixelData {
+func NewPixelizr(img string, targetRes int) (pixelData, error) {
 
   reader, err := ioutil.ReadFile(img)
   if err != nil {
@@ -52,7 +52,7 @@ func NewPixelizr(img string, targetRes int) pixelData {
     columns:   int(width),
     blockSize: int(1080/height),
     wands:     intitializeWands(),
-  }
+  }, err
 }
 
 func intitializeWands() wands {
