@@ -12,6 +12,9 @@ const (
 
 func main() {
 
-  px := pixelizr.NewPixelizr("src/harvey.jpg", 90)
+  px, err := pixelizr.NewPixelizr("src/harvey.jpg", 90)
+  if (err != nil) {
+    panic(err.Error())
+  }
   px.BlocksPng("dest/harvey.png")
 }
