@@ -2,23 +2,21 @@ package svgr
 
 import (
   "fmt"
+  // "github.com/gographics/imagick/imagick"
 )
 
-func (pxd pixelData) Blocks(dest string) {
+func (pxd pixelData) Blocks(dest string) error {
 
 
-  pxd.pixelLooper(func(pxData chan pxAddress) {
+  err := pxd.pixelLooper(func(pxAddr chan pxAddress) {
 
-    select {
-    case data := <-pxData:
+    for pxa := range pxAddr {
 
-      row  := data.row
-      col  := data.column
+      row  := pxa.row
+      col  := pxa.column
       mult := pxd.blockSize
 
-      fmt.Println(row, col, mult, data.rgb)
-
-      pxd.wands.pw.SetColor("#FFFFFF")
+      pxd.wands.pw.SetColor(fmt.Sprintf("#%x", pxa.rgb))
       pxd.wands.dw.SetFillColor(pxd.wands.pw)
 
       ox := float64(col*mult)
@@ -27,13 +25,8 @@ func (pxd pixelData) Blocks(dest string) {
       py := oy-float64(mult/3)
 
       pxd.wands.dw.Circle(ox,oy,px,py)
-
-      pxd.wg.Done()
-
-    default:
-      return
     }
-  })
+  }, dest)
 
-  return
+  return err
 }

@@ -3,7 +3,7 @@ package svgr
 import (
   "github.com/gographics/imagick/imagick"
   "io/ioutil"
-  "sync"
+  // "time"
   // "fmt"
 )
 
@@ -25,7 +25,6 @@ type pixelData struct{
   rows      int
   columns   int
   blockSize int
-  wg        sync.WaitGroup
   wands
 }
 
@@ -40,8 +39,6 @@ func NewPixelizr(img string, targetRes int) (pixelData, error) {
   if err != nil {
     panic(err.Error())
   }
-
-  var wg sync.WaitGroup
 
   wand := imagick.NewMagickWand()
 
@@ -61,7 +58,6 @@ func NewPixelizr(img string, targetRes int) (pixelData, error) {
     rows:      int(height),
     columns:   int(width),
     blockSize: int(1080/height),
-    wg:        wg,
     wands:     intitializeWands(),
   }, err
 }
@@ -90,13 +86,16 @@ func buildPixelChannel(addresses ...pxAddress) chan pxAddress {
   return out
 }
 
-func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress)) {
+func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress), dest string) error {
 
   idx := 0
   
   for row := 0; row < pxd.rows; row++ {
 
     for col := 0; col < pxd.columns; col++ {
+
+      // Throttle to prevent cgo error
+      // time.Sleep(60000)
 
       // TODO pass in pixel array instead
       pxChan := buildPixelChannel(pxAddress {
@@ -109,15 +108,29 @@ func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress)) {
                 },
       })
 
-      go renderMethod(pxChan)
+      renderMethod(pxChan)
 
       idx += 3
     }
   }
 
-  pxd.wg.Wait()
+  err := pxd.save(dest)
 
-  return
+  return err
+}
+
+func (pxd pixelData) save(dest string) error {
+  
+  bg := imagick.NewPixelWand()
+  bg.SetColor("#000000")
+  mw := imagick.NewMagickWand()
+  mw.NewImage(1920,1080,bg)
+  mw.SetImageFormat("png")
+  mw.DrawImage(pxd.wands.dw)
+  mw.SetAntialias(false)
+  err := mw.WriteImage(dest)
+
+  return err
 }
 
 /**
