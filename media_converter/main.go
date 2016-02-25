@@ -15,9 +15,14 @@ const (
   srcDir string = "/tmp/dest/" // TODO: change to "/tmp/""
 )
 
+type Frame struct {
+  path  string
+  index int
+}
+
 type imageSequence struct {
   id    uuid.UUID
-  Files chan string
+  Files chan Frame
 }
 
 func NewImageSequence(videoPath string) imageSequence {
@@ -45,16 +50,19 @@ func removeFile(file string) error {
 func (sq imageSequence) Clean() {
 
   for file := range sq.Files {
-    err := os.Remove(file)
+    err := os.Remove(file.path)
     if (err != nil) {
       panic(err.Error())
     }
   }
 }
 
-func (sq imageSequence) Add(file string) {
-  sq.Files <- file
-  return
+func (frame Frame) GetPath() string {
+  return frame.path
+}
+
+func (frame Frame) GetIndex() int {
+  return frame.index
 }
 
 func (sq imageSequence) ToMp4(dest string) error {
@@ -78,9 +86,9 @@ func (sq imageSequence) ToMp4(dest string) error {
 
 // Run ffmpeg to transform the video into individual jpgs
 // Follows pattern /tmp/[uuid]-00001.jpg
-func videoToImages(video string, id uuid.UUID) chan string {
+func videoToImages(video string, id uuid.UUID) chan Frame {
 
-  fileChan := make(chan string, 500)
+  fileChan := make(chan Frame, 500)
 
   cmd := exec.Command(
     "ffmpeg",
@@ -102,8 +110,11 @@ func videoToImages(video string, id uuid.UUID) chan string {
     panic(err.Error())
   }
 
-  for _, file := range files {
-    fileChan <- file
+  for idx, file := range files {
+    fileChan <- Frame {
+                        path:  file,
+                        index: idx,
+                      }
   }
   close(fileChan)
 

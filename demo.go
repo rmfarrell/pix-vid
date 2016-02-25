@@ -17,13 +17,12 @@ const (
 
 var vid string = "./src/betrayed.mp4"
 
+func worker(frames <-chan media_converter.Frame, results chan<- string) {
 
-func worker(jobs <-chan string, results chan<- string) {
+  for job := range frames {
+    _dest := fmt.Sprintf("%s.png",job.GetPath())
 
-  for job := range jobs {
-    _dest := fmt.Sprintf("%s.png",job)
-
-    px, err := pixelizr.NewPixelizr(job, 60)
+    px, err := pixelizr.NewPixelizr(job.GetPath(), 60)
     if(err != nil) {
       panic(err.Error())
     }
@@ -32,28 +31,26 @@ func worker(jobs <-chan string, results chan<- string) {
     if (err != nil) {
       panic(err.Error())
     }
-
-    fmt.Println(fmt.Sprintf("succcess! %s", job))
+    
+    fmt.Println(fmt.Sprintf("succcess! %s", job.GetPath()))
     results <- _dest
   }
 }
 
 func main() {
 
-  // jobs := make(chan string, 500)
+
   pngs := make(chan string, 20)
-  counter := 0
 
   imgSequence := media_converter.NewImageSequence(vid)
 
-  frames := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
+  frameCount := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
 
   for i := 0; i < 3; i ++ {
     go worker(imgSequence.Files, pngs)
   }
 
-  for a := 0; a < frames; a++ {
-    counter += 1
+  for a := 0; a < frameCount; a++ {
     <-pngs
   }
 
