@@ -12,7 +12,7 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 80
+  maxFrames float64 = 120
 )
 
 var vid string = "./src/betrayed.mp4"
@@ -46,7 +46,7 @@ func main() {
 
   frameCount := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
 
-  for i := 0; i < 3; i ++ {
+  for i := 0; i < 20; i ++ {
     go worker(imgSequence.Files, pngs)
   }
 

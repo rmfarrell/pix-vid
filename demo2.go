@@ -16,5 +16,5 @@ func main() {
   if (err != nil) {
     panic(err.Error())
   }
-  px.Squares("dest/harvey.png", 0)
+  px.FunkySquares("dest/harvey.png", 0)
 }
