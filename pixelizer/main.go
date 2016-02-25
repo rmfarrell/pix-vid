@@ -128,7 +128,7 @@ func (pxd pixelData) save(dest string) error {
   bg := imagick.NewPixelWand()
   bg.SetColor("#000000")
   mw := imagick.NewMagickWand()
-  mw.NewImage(1920,1080,bg)
+  mw.NewImage( uint(pxd.blockSize*pxd.columns) ,1080,bg)
   mw.SetImageFormat("png")
   mw.DrawImage(pxd.wands.dw)
   mw.SetAntialias(false)

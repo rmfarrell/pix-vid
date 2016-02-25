@@ -12,10 +12,10 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 10
+  maxFrames float64 = 120
 )
 
-var vid string = "./src/richter-cut.mp4"
+var vid string = "./src/betrayed.mp4"
 
 
 func worker(jobs <-chan string, results chan<- string) {
@@ -28,7 +28,7 @@ func worker(jobs <-chan string, results chan<- string) {
       panic(err.Error())
     }
 
-    err = px.BlocksPng(_dest)
+    err = px.Circles(_dest)
     if (err != nil) {
       panic(err.Error())
     }
@@ -47,7 +47,7 @@ func main() {
 
   frames := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
 
-  for i := 0; i < 6; i ++ {
+  for i := 0; i < 3; i ++ {
     go worker(imgSequence.Files, pngs)
   }
 
@@ -55,5 +55,6 @@ func main() {
     <-pngs
   }
 
+  imgSequence.ToMp4("./test.mp4")
   imgSequence.Clean()
 }

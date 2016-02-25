@@ -62,7 +62,7 @@ func (sq imageSequence) ToMp4(dest string) error {
   cmd := exec.Command(
     "ffmpeg",
     "-i",
-    fmt.Sprintf("%s%s-%%06d.jpg", srcDir, sq.id),
+    fmt.Sprintf("%s%s-%%06d.jpg.png", srcDir, sq.id),
     "-c:v",
     "libx264",
     "-vf",
