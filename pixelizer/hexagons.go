@@ -28,11 +28,11 @@ func (pxd pixelData) Hexagons(dest string, index int) error {
           Y: row * mult + (mult/2) + z,
         },
         {
-          X: col * mult + mult * .25,
+          X: col * mult + mult * .2,
           Y: row * mult + z,
         },
         {
-          X: col * mult + mult * .75,
+          X: col * mult + mult * .8,
           Y: row * mult + z,
         },
         {
@@ -40,11 +40,11 @@ func (pxd pixelData) Hexagons(dest string, index int) error {
           Y: row * mult + (mult/2) + z,
         },
         {
-          X: col * mult + mult * .75,
+          X: col * mult + mult * .8,
           Y: row * mult + mult + z,
         },
         {
-          X: col * mult + mult * .25,
+          X: col * mult + mult * .2,
           Y: row * mult + mult + z,
         },
         {
