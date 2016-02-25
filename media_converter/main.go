@@ -88,7 +88,7 @@ func (sq imageSequence) ToMp4(dest string) error {
 // Follows pattern /tmp/[uuid]-00001.jpg
 func videoToImages(video string, id uuid.UUID) chan Frame {
 
-  fileChan := make(chan Frame, 500)
+  fileChan := make(chan Frame, 5000)
 
   cmd := exec.Command(
     "ffmpeg",

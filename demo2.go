@@ -16,5 +16,5 @@ func main() {
   if (err != nil) {
     panic(err.Error())
   }
-  px.Triangles("dest/harvey.png", 0)
+  px.MultiChannelCircles("dest/harvey.png", 0)
 }

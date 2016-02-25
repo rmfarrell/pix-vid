@@ -12,22 +12,22 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 1800
+  maxFrames float64 = 9000
 )
 
-var vid string = "./src/example2.mp4"
+var vid string = "./src/example.mp4"
 
 func worker(frames <-chan media_converter.Frame, results chan<- string) {
 
   for job := range frames {
     _dest := fmt.Sprintf("%s.png",job.GetPath())
 
-    px, err := pixelizr.NewPixelizr(job.GetPath(), 15)
+    px, err := pixelizr.NewPixelizr(job.GetPath(), 40)
     if(err != nil) {
       panic(err.Error())
     }
 
-    err = px.FreakyCircles( _dest, job.GetIndex() )
+    err = px.Triangles( _dest, job.GetIndex() )
     if (err != nil) {
       panic(err.Error())
     }
