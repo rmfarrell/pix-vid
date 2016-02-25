@@ -16,5 +16,5 @@ func main() {
   if (err != nil) {
     panic(err.Error())
   }
-  px.Blocks("dest/harvey.png")
+  px.Circles("dest/harvey.png")
 }

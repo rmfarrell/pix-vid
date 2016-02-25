@@ -2,11 +2,9 @@ package svgr
 
 import (
   "fmt"
-  // "github.com/gographics/imagick/imagick"
 )
 
-func (pxd pixelData) Blocks(dest string) error {
-
+func (pxd pixelData) Circles(dest string) error {
 
   err := pxd.pixelLooper(func(pxAddr chan pxAddress) {
 

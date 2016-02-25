@@ -71,9 +71,7 @@ func intitializeWands() wands {
   }
 }
 
-/*
-* Private Methods
-*/
+// Create a channel with relevant pixel data for pixelLooper
 func buildPixelChannel(addresses ...pxAddress) chan pxAddress {
   out := make(chan pxAddress)
   go func(){
@@ -86,6 +84,12 @@ func buildPixelChannel(addresses ...pxAddress) chan pxAddress {
   return out
 }
 
+/**
+ * Iterate through a exported pixel data, apply a render method to each pixel and save the result
+ * @param {func} renderMethod - the method used to render individual pixels
+ * @param {string} dest - the intended destination for the saved png.
+ * @return error
+*/
 func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress), dest string) error {
 
   idx := 0
@@ -132,54 +136,6 @@ func (pxd pixelData) save(dest string) error {
 
   return err
 }
-
-/**
- * Iterate through a exported pixel data, apply a render method to each pixel and save the result
- * @param {func} renderMethod - the method used to render individual pixels
- * @param {string} dest - the intended destination for the saved png.
- * @return error
-*/
-/*func (pxd pixelData) writePng(renderMethod func(chan<- pxAddress), dest string) error {
-
-  idx := 0
-  
-  for row := 0; row < pxd.rows; row++ {
-
-    for col := 0; col < pxd.columns; col++ {
-
-      // TODO pass in pixel array instead
-      pxChan := buildPixelChannel(pxAddress {
-        row:    row,
-        column: col,
-        idx:    idx,
-      })
-
-      render := renderMethod(pxChan)
-
-      <-render
-
-      // pixelChannel <- renderMethod(pxAddress {
-      //   row:    row,
-      //   column: col,
-      //   idx:    idx,
-      // })
-
-      idx += 3
-    }
-  }
-
-
-  // Save image to dest
-  bg := imagick.NewPixelWand()
-  mw := imagick.NewMagickWand()
-  mw.NewImage(1920,1080,bg)
-  mw.SetImageFormat("png")
-  mw.DrawImage(pxd.wands.dw)
-  mw.SetAntialias(false)
-  err := mw.WriteImage(dest)
-
-  return err
-}*/
 
 // Shrink an image so that its longest dimension is no longer than maxSize
 func shrinkImage(wand *imagick.MagickWand, maxSize int) (w,h uint) {
