@@ -16,5 +16,5 @@ func main() {
   if (err != nil) {
     panic(err.Error())
   }
-  px.Hexagons("dest/harvey.png", 0)
+  px.Triangles("dest/harvey.png", 0)
 }
