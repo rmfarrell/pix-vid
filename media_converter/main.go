@@ -30,8 +30,8 @@ func NewImageSequence(videoPath string) imageSequence {
   }
 }
 
-func (sq imageSequence) GetLength() int {
-  return len(sq.Files)
+func (sq imageSequence) GetID() string {
+  return fmt.Sprintf("%s", sq.id)
 }
 
 func removeFile(file string) error {
