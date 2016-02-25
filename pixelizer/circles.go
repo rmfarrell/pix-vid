@@ -4,7 +4,7 @@ import (
   "fmt"
 )
 
-func (pxd pixelData) Circles(dest string) error {
+func (pxd pixelData) Circles(dest string, index int) error {
 
   err := pxd.pixelLooper(func(pxAddr chan pxAddress) {
 

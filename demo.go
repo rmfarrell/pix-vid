@@ -12,7 +12,7 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 4
+  maxFrames float64 = 80
 )
 
 var vid string = "./src/betrayed.mp4"
@@ -27,12 +27,12 @@ func worker(frames <-chan media_converter.Frame, results chan<- string) {
       panic(err.Error())
     }
 
-    err = px.Circles(_dest)
+    err = px.FreakyCircles( _dest, job.GetIndex() )
     if (err != nil) {
       panic(err.Error())
     }
-    
-    fmt.Println(fmt.Sprintf("succcess! %s", job.GetPath()))
+
+    fmt.Println("succcess!" + _dest)
     results <- _dest
   }
 }
