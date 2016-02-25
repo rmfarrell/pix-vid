@@ -12,17 +12,17 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 120
+  maxFrames float64 = 1800
 )
 
-var vid string = "./src/betrayed.mp4"
+var vid string = "./src/example2.mp4"
 
 func worker(frames <-chan media_converter.Frame, results chan<- string) {
 
   for job := range frames {
     _dest := fmt.Sprintf("%s.png",job.GetPath())
 
-    px, err := pixelizr.NewPixelizr(job.GetPath(), 60)
+    px, err := pixelizr.NewPixelizr(job.GetPath(), 15)
     if(err != nil) {
       panic(err.Error())
     }
@@ -46,7 +46,7 @@ func main() {
 
   frameCount := int(math.Min(maxFrames, float64(len(imgSequence.Files))))
 
-  for i := 0; i < 20; i ++ {
+  for i := 0; i < 8; i ++ {
     go worker(imgSequence.Files, pngs)
   }
 
