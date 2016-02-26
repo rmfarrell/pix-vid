@@ -58,17 +58,26 @@ func NewPixelizr(img string, targetRes int) (pixelData, error) {
     rows:      int(height),
     columns:   int(width),
     blockSize: int(1080/height),
-    wands:     intitializeWands(),
+    wands:     createWands(),
   }, err
 }
 
-func intitializeWands() wands {
+func createWands() wands {
 
   return wands {
     pw: imagick.NewPixelWand(),
     mw: imagick.NewMagickWand(),
     dw: imagick.NewDrawingWand(),
   }
+}
+
+func (w wands) destroy() wands {
+
+  w.pw.Destroy()
+  w.mw.Destroy()
+  w.dw.Destroy()
+
+  return wands {}
 }
 
 // Create a channel with relevant pixel data for pixelLooper
@@ -119,6 +128,8 @@ func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress), dest string)
   }
 
   err := pxd.save(dest)
+
+  pxd.wands.destroy()
 
   return err
 }
