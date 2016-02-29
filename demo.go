@@ -12,10 +12,10 @@ import (
 const (
   dest      string  = "./dest/"
   src       string  = "./src/"
-  maxFrames float64 = 9000
+  maxFrames float64 = 50000
 )
 
-var vid string = "./src/example.mp4"
+var vid string = "./src/danzig.mp4"
 
 func worker(frames <-chan media_converter.Frame, results chan<- string) {
 
@@ -27,10 +27,12 @@ func worker(frames <-chan media_converter.Frame, results chan<- string) {
       panic(err.Error())
     }
 
-    err = px.Triangles( _dest, job.GetIndex() )
+    err = px.FunkySquares( _dest, job.GetIndex() )
     if (err != nil) {
       panic(err.Error())
     }
+
+    px.Clean()
 
     fmt.Println("succcess!" + _dest)
     results <- _dest
