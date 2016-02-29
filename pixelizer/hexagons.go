@@ -1,7 +1,7 @@
 package svgr
 
 import (
-  "fmt"
+  // "fmt"
   "github.com/gographics/imagick/imagick"
 )
 
@@ -18,9 +18,7 @@ func (pxd pixelData) Hexagons(dest string, index int) error {
       // Stagger to create interlocking pixels
       var z float64 = staggerHexagons(pxa.column, mult)
     
-
-      pxd.wands.pw.SetColor(fmt.Sprintf("#%x", pxa.rgb))
-      pxd.wands.dw.SetFillColor(pxd.wands.pw)
+      pxd.wands.dw.SetFillColor(pxa.pixelWand)
 
       coords := []imagick.PointInfo {
         {
@@ -56,6 +54,7 @@ func (pxd pixelData) Hexagons(dest string, index int) error {
       pxd.wands.dw.Polygon(coords)
     }
   }, dest)
+
   return err
 }
 
