@@ -9,8 +9,6 @@ type RGBChannel struct {
   size         float64
   opacity      float64
   fill         string
-  stroke       uint8
-  strokeColor  string
 }
 
 type ChannelSettings struct {
@@ -25,20 +23,18 @@ func (pxd pixelData) MultiChannelCircles(dest string, index int) error {
 
     red: RGBChannel {
       offset:      0,
-      opacity:     .2,
-      fill:        "#e68c9b",
-      stroke:      4,
-      strokeColor: "#e68c9b",
+      opacity:    .2,
+      fill:        "#528ee3",
     },
     green: RGBChannel {
       offset:  -3,
-      opacity: .7,
-      fill:    "#9AE68C",
+      opacity: 1,
+      fill:    "#528ee3",
     },
     blue: RGBChannel {
-      offset:  10,
-      opacity: .5,
-      fill:    "#8CC7E6",
+      offset:  -20,
+      opacity: .8,
+      fill:    "#528eeF3",
     },
   }
 
