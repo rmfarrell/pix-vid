@@ -2,7 +2,7 @@ package svgr
 
 import (
   "github.com/gographics/imagick/imagick"
-  "io/ioutil"
+  // "io/ioutil"
   // "time"
   // "fmt"
 )
@@ -15,9 +15,10 @@ const (
 )
 
 type wands struct {
-  pw *imagick.PixelWand       
-  mw *imagick.MagickWand
-  dw *imagick.DrawingWand
+  src *imagick.MagickWand
+  pw  *imagick.PixelWand       
+  mw  *imagick.MagickWand
+  dw  *imagick.DrawingWand
 }
 
 type pixelData struct{
@@ -35,42 +36,40 @@ type pxAddress struct {
 
 func NewPixelizr(img string, targetRes int) (pixelData, error) {
 
-  reader, err := ioutil.ReadFile(img)
-  if err != nil {
-    panic(err.Error())
-  }
+  // reader, err := ioutil.ReadFile(img)
+  // if err != nil {
+  //   panic(err.Error())
+  // }
+  
+  srcWand := imagick.NewMagickWand()
 
-  wand := imagick.NewMagickWand()
+  err := srcWand.ReadImage(img)
 
-  if err := wand.ReadImageBlob(reader); err != nil {
-    panic(err.Error())
-  }
+  width, height := shrinkImage(srcWand, targetRes)
 
-  width, height := shrinkImage(wand, targetRes)
-
+  /*
   px, err := wand.ExportImagePixels(0,0,width,height,"RGB", imagick.PIXEL_CHAR)
   if err != nil {
     panic(err.Error())
   }
 
   wand.Destroy()
+  */
+
+
 
   return pixelData {
-    data:      px.([]uint8),
+    // data:      px.([]uint8),
     rows:      int(height),
     columns:   int(width),
     blockSize: int(1080/height),
-    wands:     createWands(),
+    wands:     wands {
+                 src: srcWand,
+                 pw:  imagick.NewPixelWand(),
+                 mw:  imagick.NewMagickWand(),
+                 dw:  imagick.NewDrawingWand(),
+               },
   }, err
-}
-
-func createWands() wands {
-
-  return wands {
-    pw: imagick.NewPixelWand(),
-    mw: imagick.NewMagickWand(),
-    dw: imagick.NewDrawingWand(),
-  }
 }
 
 func (pxd pixelData) Clean() () {
