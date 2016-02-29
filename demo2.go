@@ -1,7 +1,7 @@
 package main
 
 import (
-  "fmt"
+  _ "fmt"
   pixelizr "./pixelizer"
 )
 
@@ -12,12 +12,9 @@ const (
 
 func main() {
 
-  px, err := pixelizr.NewPixelizr("src/harvey.jpg", 60)
+  px, err := pixelizr.NewPixelizr("src/harvey.jpg", 90)
   if (err != nil) {
     panic(err.Error())
   }
-
-  fmt.Println(px)
-  
-  // px.MultiChannelCircles("dest/harvey.png", 0)
+  px.Hexagons("dest/harvey.png", 0)
 }
