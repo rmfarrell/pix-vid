@@ -94,13 +94,11 @@ func (pxd pixelData) pixelLooper(renderMethod func(chan pxAddress), dest string)
 
     for col := 0; col < pxd.columns; col++ {
 
-      // pxd.wands.pw = pi.GetCurrentIteratorRow()[col]
-
       pxChan := buildPixelChannel(pxAddress {
-        row:       row,
-        column:    col,
-        pixelWand: pi.GetCurrentIteratorRow()[col],
-      })
+          row:       row,
+          column:    col,
+          pixelWand: pi.GetCurrentIteratorRow()[col],
+        })
 
       renderMethod(pxChan)
     }
