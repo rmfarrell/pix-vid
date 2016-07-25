@@ -12,7 +12,7 @@ import (
 )
 
 const (
-  srcDir string = "/tmp/dest/" // TODO: change to "/tmp/""
+  srcDir string = "./tmp/"
 )
 
 type Frame struct {
