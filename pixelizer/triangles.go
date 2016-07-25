@@ -1,7 +1,6 @@
 package svgr
 
 import (
-  "fmt"
   "github.com/gographics/imagick/imagick"
 )
 
@@ -15,8 +14,7 @@ func (pxd pixelData) Triangles(dest string, index int) error {
       col  := float64(pxa.column)
       mult := float64(pxd.blockSize)
 
-      pxd.wands.pw.SetColor(fmt.Sprintf("#%x", pxa.rgb))
-      pxd.wands.dw.SetFillColor(pxd.wands.pw)
+      pxd.wands.dw.SetFillColor(pxa.pixelWand)
 
       var coords []imagick.PointInfo
 

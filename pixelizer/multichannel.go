@@ -15,28 +15,27 @@ type ChannelSettings struct {
   red, green, blue RGBChannel
 }
 
+var cs = ChannelSettings {
+
+  red: RGBChannel {
+    offset:      0,
+    opacity:    .2,
+    fill:        "#528ee3",
+  },
+  green: RGBChannel {
+    offset:  -3,
+    opacity: 1,
+    fill:    "#528ee3",
+  },
+  blue: RGBChannel {
+    offset:  -20,
+    opacity: .8,
+    fill:    "#528eeF3",
+  },
+}
 
 // TODO: pass mult as arg
 func (pxd pixelData) MultiChannelCircles(dest string, index int) error {
-
-  cs := ChannelSettings {
-
-    red: RGBChannel {
-      offset:      0,
-      opacity:    .2,
-      fill:        "#528ee3",
-    },
-    green: RGBChannel {
-      offset:  -3,
-      opacity: 1,
-      fill:    "#528ee3",
-    },
-    blue: RGBChannel {
-      offset:  -20,
-      opacity: .8,
-      fill:    "#528eeF3",
-    },
-  }
 
   rgbChannels := []RGBChannel {cs.red, cs.blue, cs.green}
 
@@ -48,10 +47,17 @@ func (pxd pixelData) MultiChannelCircles(dest string, index int) error {
       col  := float64(pxa.column)
       mult := float64(pxd.blockSize)
 
+      // Assign RGB values
+      rgb := []float64{
+        pxa.pixelWand.GetRed(), 
+        pxa.pixelWand.GetGreen(), 
+        pxa.pixelWand.GetBlue(),   
+      }
+
       for idx, channel := range rgbChannels {
 
         // Calculate how large each cirlce should be
-        circleSize := mult / (float64(pxa.rgb[idx]) / 255 * 15 + 3)
+        circleSize := mult / (rgb[idx] * 255 / 255 * 15 + 3)
 
         pxd.wands.pw.SetColor(channel.fill)
         // TODO

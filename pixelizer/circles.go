@@ -1,9 +1,5 @@
 package svgr
 
-import (
-  "fmt"
-)
-
 func (pxd pixelData) Circles(dest string, index int) error {
 
   err := pxd.pixelLooper(func(pxAddr chan pxAddress) {
@@ -14,8 +10,7 @@ func (pxd pixelData) Circles(dest string, index int) error {
       col  := pxa.column
       mult := pxd.blockSize
 
-      pxd.wands.pw.SetColor(fmt.Sprintf("#%x", pxa.rgb))
-      pxd.wands.dw.SetFillColor(pxd.wands.pw)
+      pxd.wands.dw.SetFillColor(pxa.pixelWand)
 
       ox := float64(col*mult)
       oy := float64(row*mult)

@@ -12,9 +12,9 @@ const (
 
 func main() {
 
-  px, err := pixelizr.NewPixelizr("src/harvey.jpg", 60)
+  px, err := pixelizr.NewPixelizr("src/harvey.jpg", 90)
   if (err != nil) {
     panic(err.Error())
   }
-  px.MultiChannelCircles("dest/harvey.png", 0)
+  px.Hexagons("dest/harvey.png", 0)
 }
